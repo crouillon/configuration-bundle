@@ -1,0 +1,13 @@
+bundle:
+    name: Configuration Bundle
+    description: Uuseful configuration per site feature
+    author: Cédric Bouillot <cedric.bouillot@lp-digital.fr>
+    manufacturer: Lp digital - http://www.lp-digital.fr
+    copyright: © 2015 Lp digital
+    version: 1
+    enable: true
+    config_per_site: true
+    thumbnail: /%bbapp.routing.resource_uri_prefix%//img/picto-extnd-configuration.png
+    admin_controller:
+        admin: LpDigital\Bundle\ConfigurationBundle\Controller\AdminController
+    admin_entry_point: admin.index

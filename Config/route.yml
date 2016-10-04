@@ -1,0 +1,4 @@
+section.store:
+    pattern: /section/store/{uid}
+    defaults: {_controller: admin.controller, _action: actionStoreSection}
+    requirements: {_method: post}

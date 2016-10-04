@@ -1,0 +1,19 @@
+<section class="bundle conf">
+    <ul class="nav nav-tabs" role="tablist">
+        {% for key, section in sections %}
+            <li role="presentation">
+                <a href="#{{key}}" aria-controls="{{key}}" role="tab" data-toggle="tab">{{section.title}}</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <div class="tab-content">
+        {% for key, section in sections %}
+            {% set fields = section.elements|json_encode|escape('html') %}
+            {% set action = this.bundleAdminUrl('conf.admin.store', {'label': key}) %}
+            <div role="tabpanel" class="tab-pane" id="{{key}}" data-fields="{{fields}}" data-action="{{this.getUri('/rest/1' ~  action, '')}}">
+                {{section.title}}
+            </div>
+        {% endfor %}
+    </div>
+</section>
+<script src="{{this.getUri('/bundle/configuration/resources/js/confManager.js')}}"></script>

@@ -1,0 +1,8 @@
+sample:
+    title: Fake Section
+    desc: Fake section configuration
+    elements:
+        text:
+            type: text
+            label: Example for text value
+            value: ""
