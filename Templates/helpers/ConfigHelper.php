@@ -50,27 +50,15 @@ class ConfigHelper extends AbstractHelper
     protected $site;
 
     /**
-     * Class constructor.
-     * @param \BackBee\Renderer\AbstractRenderer $renderer
-     */
-    /*
-      public function __construct(BBApplication $app, AbstractRenderer $renderer)
-      {
-      parent::__construct($renderer);
-      $this->app = $app;
-      }
-     */
-
-    /**
      * Helper invocation
-     * @param none
-     * @return \BackBee\Renderer\Helper\page
+     * @param  none
+     * @return ConfigHelper
      */
     public function __invoke()
     {
         $this->app = $this->getRenderer()->getApplication();
         $this->site = $this->app->getSite();
-        $this->sections = $this->app->getEntityManager()->getRepository('BackBee\Bundle\ConfigurationBundle\Entity\Section');
+        $this->sections = $this->app->getEntityManager()->getRepository('LpDigital\Bundle\ConfigurationBundle\Entity\Section');
         return $this;
     }
 

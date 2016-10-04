@@ -29,7 +29,6 @@ use BackBee\Site\Site;
  * Configuration section entity
  *
  * @category    Entity
- * @package     BackBee\Bundle\ConfigurationBundle
  * @copyright   ©2015 - Lp digital - http://www.lp-digital.fr
  * @author      Cédric Bouillot (CBO) <cedric.bouillot@lp-digital.fr>
  *
@@ -150,8 +149,8 @@ class Section
 
     /**
      * Setter for section site
-     * @param \BackBee\Site\Site $site
-     * @return \BackBee\Bundle\ConfigurationBundle\Entity\Section User for chaining
+     * @param  Site $site
+     * @return Section User for chaining
      */
     public function setSite(Site $site = null)
     {
@@ -170,8 +169,8 @@ class Section
 
     /**
      * Set section label
-     * @var string $label
-     * @return \BackBee\Bundle\ConfigurationBundle\Entity\Section User for chaining
+     * @var    string $label
+     * @return Section User for chaining
      */
     public function setLabel($label)
     {
@@ -190,8 +189,8 @@ class Section
 
     /**
      * Set section elements
-     * @param array $elements Section elements
-     * @return \BackBee\Bundle\ConfigurationBundle\Entity\Section User for chaining
+     * @param  array $elements Section elements
+     * @return Section User for chaining
      */
     public function setElements($elements)
     {
@@ -201,7 +200,7 @@ class Section
 
     /**
      * Retrieve provided element from section elements
-     * @param string $element Element to get
+     * @param  string $element Element to get
      * @return string The element
      */
     public function getElement($element)
@@ -211,12 +210,11 @@ class Section
 
     /**
      * Retrieve provided element value from section elements
-     * @param string $element Element to get value from
+     * @param  string $element Element to get value from
      * @return string The element value
      */
     public function getElementValue($element)
     {
         return (isset($this->elements[$element]) ? $this->elements[$element]['value'] : null);
     }
-
 }

@@ -31,7 +31,6 @@ use LpDigital\Bundle\ConfigurationBundle\Entity\Section;
  * Configuration bundle
  *
  * @category        Bundle
- * @package         BackBee\Bundle\ConfigurationBundle
  * @manufacturer    Lp digital - http://www.lp-digital.fr
  * @copyright       ©2015 - Lp digital
  * @author          Cédric Bouillot (CBO) <cedric.bouillot@lp-digital.fr>
@@ -61,7 +60,7 @@ class Configuration extends AbstractBundle
      */
     public function start()
     {
-        $this->sections = $this->getEntityManager()->getRepository('BackBee\Bundle\ConfigurationBundle\Entity\Section');
+        $this->sections = $this->getEntityManager()->getRepository('LpDigital\Bundle\ConfigurationBundle\Entity\Section');
         $this->site = $this->getApplication()->getSite();
         $this->conf = $this->getConfig()->getSection('sections');
     }

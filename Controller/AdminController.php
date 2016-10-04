@@ -28,7 +28,6 @@ use BackBee\Bundle\AbstractAdminBundleController;
  * Handles Confguration admin related actions
  *
  * @category    Controller
- * @package     BackBee\Bundle\ConfigurationBundle
  * @copyright   ©2015 - Lp digital - http://www.lp-digital.fr
  * @author      Cédric Bouillot (CBO) <cedric.bouillot@lp-digital.fr>
  */
