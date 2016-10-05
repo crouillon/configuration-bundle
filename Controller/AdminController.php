@@ -24,8 +24,8 @@ namespace LpDigital\Bundle\ConfigurationBundle\Controller;
 use BackBee\Bundle\AbstractAdminBundleController;
 
 /**
- * Configuration Admin Controller
- * Handles Confguration admin related actions
+ * Configuration Admin Controller.
+ * Handles Confguration admin related actions.
  *
  * @category    Controller
  * @copyright   ©2015 - Lp digital - http://www.lp-digital.fr
@@ -35,7 +35,8 @@ class AdminController extends AbstractAdminBundleController
 {
 
     /**
-     * Configuration default admin
+     * Configuration default admin.
+     *
      * @return string HTML rendered default admin template
      */
     public function indexAction()
@@ -44,12 +45,21 @@ class AdminController extends AbstractAdminBundleController
     }
 
     /**
-     * Store provided section values if modified (ie not null)
-     * @param string $label
+     * Store provided section values if modified (ie not null).
+     *
+     * @param  string $label
+     *
      * @return string
      */
     public function storeAction($label = null)
     {
-        return $this->getBundle()->setSection($label);
+        try {
+            $this->getBundle()->setSection($label);
+            $this->notifyUser(self::NOTIFY_SUCCESS, 'Section saved.');
+        } catch (\Exception $ex) {
+            $this->notifyUser(self::NOTIFY_ERROR, 'Section not saved:' . $ex->getMessage());
+        }
+
+        return $this->indexAction();
     }
 }

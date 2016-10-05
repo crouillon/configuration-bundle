@@ -10,10 +10,10 @@
         {% for key, section in sections %}
             {% set fields = section.elements|json_encode|escape('html') %}
             {% set action = this.bundleAdminUrl('conf.admin.store', {'label': key}) %}
-            <div role="tabpanel" class="tab-pane" id="{{key}}" data-fields="{{fields}}" data-action="{{this.getUri('/rest/1' ~  action, '')}}">
+            <div role="tabpanel" class="tab-pane" id="{{key}}" data-fields="{{fields|raw}}" data-action="{{ action }}">
                 {{section.title}}
             </div>
         {% endfor %}
     </div>
 </section>
-<script src="{{this.getUri('/bundle/configuration/resources/js/confManager.js')}}"></script>
+<script src="{{this.getResourceUrl('/js/ext-confManager.js')}}"></script>

@@ -1,6 +1,6 @@
-//# sourceURL=bundle/configuration/confManager.js
+//# sourceURL=/resources/js/ext-confManager.js
 require(
-        ['jquery', '/bundle/configuration/resources/js/formManager.js'],
+        ['jquery', '/resources/js/ext-formManager.js'],
         function (jQuery, FormManager) {
             'use strict';
             var confManager = {
@@ -10,6 +10,7 @@ require(
                  * @return {object} The interface
                  */
                 init: function () {
+                    FormManager.bindChanges();
                     this.setupForms();
                     return this;
                 },
@@ -19,15 +20,16 @@ require(
                  * @returns {confManager} For chaining
                  */
                 setupForms: function () {
-                    jQuery.each(jQuery('.tab-pane[role=tabpanel]'), function (idx, el) {
-                        if ('undefined' !== typeof $(el).attr('id')) {
-                            FormManager.displayForm($(el));
+                    jQuery.each(jQuery('#bundle-admin .tab-pane[role=tabpanel]'), function (idx, el) {
+                        if ('undefined' !== typeof jQuery(el).attr('id')) {
+                            FormManager.displayForm(jQuery(el));
                         }
                     });
                     jQuery('section.bundle.conf li[role=presentation] a')[0].click();
                     return this;
                 }
             };
+
             return confManager.init();
         }
 );

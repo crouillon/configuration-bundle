@@ -21,9 +21,10 @@
 
 namespace LpDigital\Bundle\ConfigurationBundle;
 
-use Symfony\Component\HttpFoundation\Response;
+use Doctrine\ORM\Repository\Repository;
 
 use BackBee\Bundle\AbstractBundle;
+use BackBee\Site\Site;
 
 use LpDigital\Bundle\ConfigurationBundle\Entity\Section;
 
@@ -39,19 +40,42 @@ class Configuration extends AbstractBundle
 {
 
     /**
-     * @var \Doctrine\ORM\Repository\Repository
+     * Element types handled with their default empty value.
+     *
+     * @var array
+     */
+    protected $handledTypes = [
+        'text' => '',
+        'password' => '',
+        'textarea' => '',
+        'datetimepicker' => 0,
+        'checkbox' => [],
+        'radio' => [],
+        'select' => [],
+        'nodeSelector' => [],
+        'mediaSelector' => [],
+        'linkSelector' => [],
+
+    ];
+
+    /**
+     * Entity repository for sections.
+     *
+     * @var Repository
      */
     protected $sections;
 
     /**
-     * Current Site
-     * @var BackBee\Site\Site
+     * Current Site.
+     *
+     * @var Site
      */
     protected $site;
 
     /**
-     * Configuration provided sections
-     * @var Array
+     * Configuration provided sections.
+     *
+     * @var array
      */
     protected $conf;
 
@@ -63,61 +87,132 @@ class Configuration extends AbstractBundle
         $this->sections = $this->getEntityManager()->getRepository('LpDigital\Bundle\ConfigurationBundle\Entity\Section');
         $this->site = $this->getApplication()->getSite();
         $this->conf = $this->getConfig()->getSection('sections');
+        $this->sanitizeConf($this->conf);
     }
 
     /**
-     * Get sections data from config
-     * @param mixed $section Section(s) to get
-     * @return array Array of sections with fields/values
+     * Get sections data from config.
+     *
+     * @param  mixed $section Section(s) to get.
+     *
+     * @return array          Array of sections with fields/values.
      */
-    public function getSections($section = null)
+    public function getSections($section = [])
     {
-        if ($section && !is_array($section)) {
-            $section = array($section);
+        if (!is_array($section)) {
+            $section = [$section];
         }
-        $sections = array();
+
+        $sections = [];
         foreach ($this->conf as $key => $item) {
-            if (!$section || in_array($key, $section)) {
-                if (null !== $stored = $this->sections->findOneBy(array('site' => $this->site, 'label' => $key))) {
-                    foreach ($stored->getElements() as $label => $element) {
-                        if (isset($item['elements'][$label])) {
-                            $item['elements'][$label] = $element;
-                        }
-                    }
-                }
+            if (!empty($section) && !in_array($key, $section)) {
+                continue;
             }
+
             $sections[$key] = $item;
+            if (null !== $stored = $this->getStoredSection($key)) {
+                $sections[$key]['elements'] = array_merge($sections[$key]['elements'], $stored->getElements());
+            }
         }
+
+        $this->sanitizeConf($sections);
+
         return $sections;
     }
 
     /**
-     * Set sections data from provided data
-     * @param {string} $label Item to set properties for
-     * @return array Array of sections with fields/values
+     * Set section data from provided data.
+     *
+     * @param  string $label Item to set properties for.
+     *
+     * @return Section       The updated section entity..
      */
     public function setSection($label)
     {
         if (!isset($this->conf[$label])) {
-            return new Response('', Response::HTTP_NO_CONTENT);
+            throw new \InvalidArgumentException(sprintf('Unknown section %s.', $label));
         }
-        if (null === $section = $this->sections->findOneBy(array('site' => $this->site, 'label' => $label))) {
-            $section = new Section();
-            $section->setSite($this->site)->setLabel($label);
-        }
-        $elements = array();
+
+        $elements = [];
+        $section = $this->getStoredSection($label, true);
+        $request = $this->getApplication()->getRequest()->request;
+
         foreach ($this->conf[$label]['elements'] as $key => $element) {
-            if (null !== ($val = $this->getApplication()->getRequest()->request->get($key))) {
-                $element['value'] = $val;
-            } elseif (null !== ($val = $section->getElementValue($key))) {
-                $element['value'] = $val;
-            }
+            $post = $request->get($key);
+            $element['value'] = null !== $post ? $post : $section->getElementValue($key);
             $elements[$key] = $element;
         }
+
         $section->setElements($elements);
-        $this->getEntityManager()->persist($section);
-        $this->getEntityManager()->flush();
-        return new Response('', Response::HTTP_OK);
+        $this->getEntityManager()->flush($section);
+
+        return $section;
+    }
+
+    /**
+     * Return the stored section $label if found and persist not asked, null otherwise.
+     *
+     * @param  string       $label             The section to look for.
+     * @param  boolean      $persistIfNotFound Optional, persists a new section $label
+     *                                         if need (default: false)
+     *
+     * @return Section|null
+     */
+    private function getStoredSection($label, $persistIfNotFound = false)
+    {
+        $section = $this->sections->findOneBy(['site' => $this->site, 'label' => $label]);
+
+        if (true === $persistIfNotFound && null === $section) {
+            $section = new Section();
+
+            $section->setSite($this->site)
+                    ->setLabel($label);
+
+            $this->getEntityManager()->persist($section);
+        }
+
+        return $section;
+    }
+
+    /**
+     * Sanitizes section configuration.
+     *
+     * @param array $conf
+     */
+    private function sanitizeConf(array &$conf)
+    {
+        foreach ($conf as $section => $item) {
+            if (!isset($this->conf[$section]) || !isset($item['elements'])) {
+                unset($conf[$section]);
+                continue;
+            }
+
+            if (!is_array($item['elements'])) {
+                $conf[$section]['elements'] = [$item['elements']];
+            }
+
+            $this->sanitizeElements($conf[$section]['elements']);
+        }
+    }
+
+    /**
+     * Sanitizes section elements.
+     *
+     * @param array $elements
+     */
+    private function sanitizeElements(array &$elements)
+    {
+        $availableTypes = array_keys($this->handledTypes);
+        foreach ($elements as $label => $element) {
+            if (!isset($element['type']) || !in_array($element['type'], $availableTypes)) {
+                unset($elements[$label]);
+                continue;
+            }
+
+            if (!isset($element['value']) || empty($element['value'])) {
+                $elements[$label]['value'] = $this->handledTypes[$element['type']];
+            }
+        }
     }
 
     /**
@@ -127,5 +222,4 @@ class Configuration extends AbstractBundle
     {
 
     }
-
 }
