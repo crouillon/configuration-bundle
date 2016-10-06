@@ -1,0 +1,2 @@
+# bundles configuration
+conf: LpDigital\Bundle\ConfigurationBundle\Configuration

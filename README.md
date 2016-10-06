@@ -28,11 +28,6 @@ Save and close the file.
 
 Run a composer update on your project.
 
-Then launch the command to update database:
-```
-./backbee bundle:update conf --force
-```
-
 Activation
 ----------
 
@@ -46,5 +41,10 @@ conf: LpDigital\Bundle\ConfigurationBundle\Configuration
 ```
 
 Save and close the file.
+
+Then launch the command to update database:
+```
+./backbee bundle:update conf --force
+```
 
 Depending on your configuration, cache may need to be clear.

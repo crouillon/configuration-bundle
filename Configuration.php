@@ -21,7 +21,8 @@
 
 namespace LpDigital\Bundle\ConfigurationBundle;
 
-use Doctrine\ORM\Repository\Repository;
+use Doctrine\DBAL\DBALException;
+use Doctrine\ORM\EntityRepository;
 
 use BackBee\Bundle\AbstractBundle;
 use BackBee\Site\Site;
@@ -55,13 +56,12 @@ class Configuration extends AbstractBundle
         'nodeSelector' => [],
         'mediaSelector' => [],
         'linkSelector' => [],
-
     ];
 
     /**
      * Entity repository for sections.
      *
-     * @var Repository
+     * @var EntityRepository
      */
     protected $sections;
 
@@ -93,12 +93,18 @@ class Configuration extends AbstractBundle
     /**
      * Get sections data from config.
      *
-     * @param  mixed $section Section(s) to get.
+     * @param  mixed $section    Section(s) to get.
      *
-     * @return array          Array of sections with fields/values.
+     * @return array             Array of sections with fields/values.
+     *
+     * @throws \RuntimeException Thrown if he bundle is not installed.
      */
     public function getSections($section = [])
     {
+        if (!$this->isInstalled()) {
+            throw new \RuntimeException(sprintf('Configuration bundle is not install, please run `./backbee bundle:install %s`', $this->getId()));
+        }
+
         if (!is_array($section)) {
             $section = [$section];
         }
@@ -123,23 +129,28 @@ class Configuration extends AbstractBundle
     /**
      * Set section data from provided data.
      *
-     * @param  string $label Item to set properties for.
+     * @param  string $label  Item to set properties for.
+     * @param  array  $values The values to be set.
      *
-     * @return Section       The updated section entity..
+     * @return Section        The updated section entity.
+     *
+     * @throws \RuntimeException Thrown if he bundle is not installed.
      */
-    public function setSection($label)
+    public function setSection($label, array $values)
     {
+        if (!$this->isInstalled()) {
+            throw new \RuntimeException(sprintf('Configuration bundle is not install, please run `./backbee bundle:install %s`', $this->getId()));
+        }
+
         if (!isset($this->conf[$label])) {
             throw new \InvalidArgumentException(sprintf('Unknown section %s.', $label));
         }
 
         $elements = [];
         $section = $this->getStoredSection($label, true);
-        $request = $this->getApplication()->getRequest()->request;
-
         foreach ($this->conf[$label]['elements'] as $key => $element) {
-            $post = $request->get($key);
-            $element['value'] = null !== $post ? $post : $section->getElementValue($key);
+            $value = isset($values[$key]) ? $values[$key] : null;
+            $element['value'] = null !== $value ? $value : $section->getElementValue($key);
             $elements[$key] = $element;
         }
 
@@ -182,13 +193,14 @@ class Configuration extends AbstractBundle
     private function sanitizeConf(array &$conf)
     {
         foreach ($conf as $section => $item) {
-            if (!isset($this->conf[$section]) || !isset($item['elements'])) {
+            if (
+                    !isset($this->conf[$section])
+                    || !is_array($item)
+                    || !isset($item['elements'])
+                    || !is_array($item['elements'])
+            ) {
                 unset($conf[$section]);
                 continue;
-            }
-
-            if (!is_array($item['elements'])) {
-                $conf[$section]['elements'] = [$item['elements']];
             }
 
             $this->sanitizeElements($conf[$section]['elements']);
@@ -204,7 +216,7 @@ class Configuration extends AbstractBundle
     {
         $availableTypes = array_keys($this->handledTypes);
         foreach ($elements as $label => $element) {
-            if (!isset($element['type']) || !in_array($element['type'], $availableTypes)) {
+            if (!is_array($element) || !isset($element['type']) || !in_array($element['type'], $availableTypes)) {
                 unset($elements[$label]);
                 continue;
             }
@@ -216,7 +228,25 @@ class Configuration extends AbstractBundle
     }
 
     /**
+     * Checks whether the bundle is properly installed.
+     *
+     * @return boolean
+     */
+    private function isInstalled()
+    {
+        try {
+            $this->sections->find('0');
+        } catch (DBALException $e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * {@inheritdoc}
+     *
+     * @codeCoverageIgnore
      */
     public function stop()
     {

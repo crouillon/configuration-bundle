@@ -54,10 +54,10 @@ class AdminController extends AbstractAdminBundleController
     public function storeAction($label = null)
     {
         try {
-            $this->getBundle()->setSection($label);
+            $this->getBundle()->setSection($label, $this->getRequest()->request->all());
             $this->notifyUser(self::NOTIFY_SUCCESS, 'Section saved.');
         } catch (\Exception $ex) {
-            $this->notifyUser(self::NOTIFY_ERROR, 'Section not saved:' . $ex->getMessage());
+            $this->notifyUser(self::NOTIFY_ERROR, 'Section not saved: ' . $ex->getMessage());
         }
 
         return $this->indexAction();

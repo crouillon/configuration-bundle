@@ -93,7 +93,7 @@ class Section
      *      nullable=false
      * )
      */
-    protected $elements = array();
+    protected $elements;
 
     /**
      * Section creation date
@@ -117,9 +117,10 @@ class Section
     private $modified;
 
     /**
-     * Class constructor
+     * Class constructor.
+     *
      * @param string $uid
-     * @param array $props
+     * @param array  $props
      */
     public function __construct($uid = null, array $props = null)
     {
@@ -129,8 +130,8 @@ class Section
     }
 
     /**
-     * Getter for publication unique id
-     * @param {none}
+     * Getter for publication unique id.
+     *
      * @return string
      */
     public function getUid()
@@ -139,8 +140,9 @@ class Section
     }
 
     /**
-     * Getter for section site
-     * @return string Section site
+     * Getter for section site.
+     *
+     * @return string|null Section site.
      */
     public function getSite()
     {
@@ -148,19 +150,23 @@ class Section
     }
 
     /**
-     * Setter for section site
-     * @param  Site $site
-     * @return Section User for chaining
+     * Setter for section site.
+     *
+     * @param  Site    $site
+     *
+     * @return Section Current instance for chaining operation.
      */
     public function setSite(Site $site = null)
     {
         $this->site = $site;
+
         return $this;
     }
 
     /**
-     * Get section label
-     * @return string Section label
+     * Get section label.
+     *
+     * @return string|null Section label.
      */
     public function getLabel()
     {
@@ -168,53 +174,68 @@ class Section
     }
 
     /**
-     * Set section label
-     * @var    string $label
-     * @return Section User for chaining
+     * Set section label.
+     *
+     * @var    string  $label
+     *
+     * @return Section Current instance for chaining operation.
      */
     public function setLabel($label)
     {
         $this->label = $label;
+
         return $this;
     }
 
     /**
-     * Get section elements
-     * @return array Section data
+     * Get section elements.
+     *
+     * @return array Section data.
      */
     public function getElements()
     {
-        return $this->elements;
+        return $this->elements ? : [];
     }
 
     /**
-     * Set section elements
-     * @param  array $elements Section elements
-     * @return Section User for chaining
+     * Set section elements.
+     *
+     * @param  array   $elements Section elements.
+     *
+     * @return Section Current instance for chaining operation.
      */
-    public function setElements($elements)
+    public function setElements(array $elements)
     {
         $this->elements = $elements;
+
         return $this;
     }
 
     /**
-     * Retrieve provided element from section elements
-     * @param  string $element Element to get
-     * @return string The element
+     * Retrieve provided element from section elements.
+     *
+     * @param  string      $element Element to get.
+     *
+     * @return string|null          The element if found.
      */
     public function getElement($element)
     {
-        return (isset($this->elements[$element]) ? $this->elements[$element] : null);
+        $elements = $this->getElements();
+
+        return (isset($elements[$element]) ? $elements[$element] : null);
     }
 
     /**
-     * Retrieve provided element value from section elements
-     * @param  string $element Element to get value from
-     * @return string The element value
+     * Retrieve provided element value from section elements.
+     *
+     * @param  string       $element Element to get value from.
+     *
+     * @return string|null           The element value if found.
      */
     public function getElementValue($element)
     {
-        return (isset($this->elements[$element]) ? $this->elements[$element]['value'] : null);
+        $value = $this->getElement($element);
+
+        return (is_array($value) && isset($value['value']) ? $value['value'] : null);
     }
 }

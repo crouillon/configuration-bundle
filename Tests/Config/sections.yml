@@ -1,0 +1,28 @@
+sample1:
+    title: fake
+    elements:
+        text:
+            type: text
+            label: Example for text value
+            value: 'value'
+sample2:
+    title: fake
+    elements:
+        text:
+            type: text
+            label: Example for text value
+            value: ''
+sample3:
+    title: fake
+    elements:
+        text:
+            type: text
+            label: Example for text value
+            value: ''
+sample4:
+    title: fake
+    elements:
+        text:
+            type: text
+            label: Example for text value
+            value: ''

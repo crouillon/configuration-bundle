@@ -21,6 +21,11 @@
 
 namespace BackBee\Renderer\Helper;
 
+use BackBee\Renderer\AbstractRenderer;
+use BackBee\Utils\Collection\Collection;
+
+use LpDigital\Bundle\ConfigurationBundle\Configuration;
+
 /**
  * Config helper
  * Provide configuration functions to handle configuration parameters
@@ -34,50 +39,39 @@ class ConfigHelper extends AbstractHelper
 {
 
     /**
-     * @var BackBee\BBApplication
+     * The Configuration bundle.
+     *
+     * @var Configuration
      */
-    protected $app;
+    private $confBundle;
 
     /**
-     * @var \Doctrine\ORM\Repository\Repository
+     * Class constructor.
+     *
+     * @param AbstractRenderer $renderer
      */
-    protected $sections;
-
-    /**
-     * Current Site
-     * @var BackBee\Site\Site
-     */
-    protected $site;
-
-    /**
-     * Helper invocation
-     * @param  none
-     * @return ConfigHelper
-     */
-    public function __invoke()
+    public function __construct(AbstractRenderer $renderer)
     {
-        $this->app = $this->getRenderer()->getApplication();
-        $this->site = $this->app->getSite();
-        $this->sections = $this->app->getEntityManager()->getRepository('LpDigital\Bundle\ConfigurationBundle\Entity\Section');
-        return $this;
+        parent::__construct($renderer);
+        $this->confBundle = $this->getRenderer()->getApplication()->getBundle('conf');
     }
 
     /**
-     * Get the value of provided configuration marker
+     * Returns an element value
+     *
+     * @param  $marker A path to set required value: section:element
+     *
      * @return mixed
      */
-    public function getValue($marker)
+    public function __invoke($marker)
     {
-        list($label, $element) = explode(':', $marker);
-        $sections = $this->app->getBundle('conf')->getSections();
-        $section = $this->sections->findOneBy(array('site' => $this->site, 'label' => $label));
-        if ($section && null !== ($val = $section->getElementValue($element))) {
-            return $val;
-        } elseif (isset($sections[$label]['elements'][$element]['value'])) {
-            return $sections[$label]['elements'][$element]['value'];
-        } else {
+        if (false === strpos($marker, ':')) {
             return null;
         }
-    }
 
+        list($label, $element) = explode(':', $marker, 2);
+        $section = $this->confBundle->getSections($label);
+
+        return Collection::get($section, sprintf('%s:elements:%s:value', $label, $element), null);
+    }
 }
