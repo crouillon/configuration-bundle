@@ -75,11 +75,11 @@ These sections and elements will then available for editing from the Bundle pane
 There is no limit for the number of sections or the number of elements in one section.
 
 In order to add some configuration values in your BackBee project, create and edit the file:
-`/repository/Config/bundle/conf/config.yml`
+`/repository/Config/bundle/conf/sections.yml`
 
 For example, the following shows you every element types available:
 ```yaml
-#/repository/Config/bundle/conf/config.yml
+#/repository/Config/bundle/conf/sections.yml
 sample:
     title: Fake Section
     desc: Fake section configuration

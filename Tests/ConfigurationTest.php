@@ -99,7 +99,7 @@ class ConfigurationTest extends ConfigurationTestCase
     {
         $sample1 = $this->bundle->setSection('sample1', []);
         $this->assertInstanceOf('LpDigital\Bundle\ConfigurationBundle\Entity\Section', $sample1);
-        $this->assertEquals('', $sample1->getElementValue('text'));
+        $this->assertEquals('value', $sample1->getElementValue('text'));
         $this->assertFalse($this->bundle->getEntityManager()->getUnitOfWork()->isEntityScheduled($sample1));
 
         $sample2 = $this->bundle->setSection('sample2', ['text' => null]);

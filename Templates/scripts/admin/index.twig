@@ -2,15 +2,15 @@
     <ul class="nav nav-tabs" role="tablist">
         {% for key, section in sections %}
             <li role="presentation">
-                <a href="#{{key}}" aria-controls="{{key}}" role="tab" data-toggle="tab">{{section.title}}</a>
+                <a href="#conf-section-{{key}}" aria-controls="{{key}}" role="tab" data-toggle="tab">{{section.title}}</a>
             </li>
         {% endfor %}
     </ul>
     <div class="tab-content">
         {% for key, section in sections %}
             {% set fields = section.elements|json_encode|escape('html') %}
-            {% set action = this.bundleAdminUrl('conf.admin.store', {'label': key}) %}
-            <div role="tabpanel" class="tab-pane" id="{{key}}" data-fields="{{fields|raw}}" data-action="{{ action }}">
+            {% set action = this.bundleAdminUrl('conf.admin.store', {'label': 'conf-section-' ~ key}) %}
+            <div role="tabpanel" class="tab-pane" id="conf-section-{{key}}" data-fields="{{fields|raw}}" data-action="{{ action }}">
                 {{section.title}}
             </div>
         {% endfor %}

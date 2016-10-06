@@ -79,12 +79,17 @@ define(
                             var tab = jQuery(mutations[0].target).closest('.tab-pane[role=tabpanel]').attr('id');
                             jQuery('#bundle-admin a[role=tab][href=#' + tab + ']').closest('li[role=presentation]').addClass('bg-danger');
                         });
-                        observer.observe(document.querySelector("#bundle-admin ul.nodeselector_list"), {childList: true});
-                        observer.observe(document.querySelector("#bundle-admin ul.linkselector_list"), {childList: true});
-                        observer.observe(document.querySelector("#bundle-admin ul.media_list"), {childList: true});
+                        var addObserve = function (observer, selector) {
+                            if (0 < jQuery('#bundle-admin').find(selector).length) {
+                                observer.observe(document.querySelector("#bundle-admin " + selector), {childList: true});
+                            }
+                        };
+
+                        addObserve(observer, 'ul.nodeselector_list');
+                        addObserve(observer, 'ul.linkselector_list');
+                        addObserve(observer, 'ul.media_list');
                     }
                 });
-
 
                 return true;
             };

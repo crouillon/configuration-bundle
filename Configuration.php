@@ -177,7 +177,8 @@ class Configuration extends AbstractBundle
             $section = new Section();
 
             $section->setSite($this->site)
-                    ->setLabel($label);
+                    ->setLabel($label)
+                    ->setElements($this->conf[$label]['elements']);
 
             $this->getEntityManager()->persist($section);
         }

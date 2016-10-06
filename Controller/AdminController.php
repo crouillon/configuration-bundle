@@ -54,6 +54,10 @@ class AdminController extends AbstractAdminBundleController
     public function storeAction($label = null)
     {
         try {
+            if (0 === strpos($label, 'conf-section')) {
+                $label = substr($label, 13);
+            }
+
             $this->getBundle()->setSection($label, $this->getRequest()->request->all());
             $this->notifyUser(self::NOTIFY_SUCCESS, 'Section saved.');
         } catch (\Exception $ex) {

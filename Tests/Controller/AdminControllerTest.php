@@ -82,7 +82,7 @@ class AdminControllerTest extends ConfigurationTestCase
 
         $sections = $this->bundle->getSections();
         foreach ($sections as $label => $section) {
-            $this->assertNotFalse(strpos($response, sprintf('href="#%s"', $label)));
+            $this->assertNotFalse(strpos($response, sprintf('href="#conf-section-%s"', $label)));
             $this->assertNotFalse(strpos($response, htmlentities(json_encode($section['elements']))));
         }
     }
@@ -110,6 +110,10 @@ class AdminControllerTest extends ConfigurationTestCase
         ]];
 
         $this->assertEquals($response, $this->controller->storeAction('sample2'));
+        $this->assertEquals($success, $this->controller->getNotifications());
+
+        $this->controller->resetNotifications();
+        $this->assertEquals($response, $this->controller->storeAction('conf-section-sample2'));
         $this->assertEquals($success, $this->controller->getNotifications());
     }
 }
