@@ -2,8 +2,8 @@ ConfigurationBundle
 =====================
 
 [![Build Status](https://travis-ci.org/Lp-digital/configuration-bundle.svg?branch=master)](https://travis-ci.org/Lp-digital/configuration-bundle)
-[![Code Climate](https://codeclimate.com/github/Lp-digital/configuration-bundle/badges/gpa.svg)](https://codeclimate.com/github/Lp-digital/ConfigurationBundle)
-[![Test Coverage](https://codeclimate.com/github/Lp-digital/configuration-bundle/badges/coverage.svg)](https://codeclimate.com/github/Lp-digital/ConfigurationBundle/coverage)
+[![Code Climate](https://codeclimate.com/github/Lp-digital/configuration-bundle/badges/gpa.svg)](https://codeclimate.com/github/Lp-digital/configuration-bundle)
+[![Test Coverage](https://codeclimate.com/github/Lp-digital/configuration-bundle/badges/coverage.svg)](https://codeclimate.com/github/Lp-digital/configuration-bundle/coverage)
 
 **ConfigurationBundle** provides useful configuration per site feature.
 This bundle support multi-sites instances.
