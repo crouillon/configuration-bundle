@@ -8,7 +8,7 @@ define(
             'component!formsubmitter',
             'Core/RequestHandler',
             'Core/Request',
-            'component!Notify'
+            'component!notify'
         ],
         function (Core, jQuery, FormBuilder, FormSubmitter, RequestHandler, Request, Notify) {
             /**
