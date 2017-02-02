@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2016 Lp digital system
+ * Copyright (c) 2017 Lp digital system
  *
  * This file is part of ConfigurationBundle.
  *
@@ -72,7 +72,10 @@ class ConfigurationTest extends ConfigurationTestCase
     {
         $this->assertInstanceOf('\Doctrine\ORM\EntityRepository', $this->getProperty($this->bundle, 'sections'));
         $this->assertEquals($this->site, $this->getProperty($this->bundle, 'site'));
-        $this->assertEquals(Yaml::parse(file_get_contents(__DIR__ . '/Config/sections.yml')), $this->getProperty($this->bundle, 'conf'));
+        $this->assertEquals(
+            Yaml::parse(file_get_contents(__DIR__ . '/Config/sections.yml')),
+            $this->getProperty($this->bundle, 'conf')
+        );
     }
 
     /**
@@ -85,11 +88,28 @@ class ConfigurationTest extends ConfigurationTestCase
         $this->assertEquals($default, $this->bundle->getSections());
         $this->assertEquals([], $this->bundle->getSections('unknown'));
         $this->assertEquals(['sample1' => $default['sample1']], $this->bundle->getSections('sample1'));
-        $this->assertEquals(['sample1' => $default['sample1'], 'sample4' => $default['sample4']], $this->bundle->getSections(['sample1', 'sample4']));
+        $this->assertEquals(
+            ['sample1' => $default['sample1'], 'sample4' => $default['sample4']],
+            $this->bundle->getSections(['sample1', 'sample4'])
+        );
 
         $this->bundle->setSection('sample2', ['text' => 'new value']);
         $sample2 = $this->bundle->getSections('sample2');
         $this->assertEquals('new value', Collection::get($sample2, 'sample2:elements:text:value'));
+    }
+
+    /**
+     * @covers LpDigital\Bundle\ConfigurationBundle\Configuration::getSections()
+     */
+    public function testGetSectionTruncated()
+    {
+        $default = $this->getProperty($this->bundle, 'conf');
+        $section = $this->invokeMethod($this->bundle, 'getStoredSection', ['sample4', true]);
+        $this->bundle->getEntityManager()->flush($section);
+
+        unset($default['sample4']['elements']['text2']);
+        $this->setProperty($this->bundle, 'conf', $default);
+        $this->assertEquals($default, $this->bundle->getSections());
     }
 
     /**
@@ -172,7 +192,7 @@ class ConfigurationTest extends ConfigurationTestCase
             'el2' => ['type' => 'datetimepicker', 'value' => null],
             'iv2' => [],
             'el3' => ['type' => 'nodeSelector'],
-            'iv3' => '' 
+            'iv3' => '',
         ];
 
         $expected = [

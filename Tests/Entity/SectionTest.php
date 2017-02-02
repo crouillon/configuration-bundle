@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2016 Lp digital system
+ * Copyright (c) 2017 Lp digital system
  *
  * This file is part of ConfigurationBundle.
  *
@@ -110,7 +110,11 @@ class SectionTest extends ConfigurationTestCase
     public function testGetElementValue()
     {
         $section = new Section();
-        $section->setElements(['sample1' => 'sample element', 'sample2' => [], 'sample3' => ['value' => 'sample value']]);
+        $section->setElements([
+            'sample1' => 'sample element',
+            'sample2' => [],
+            'sample3' => ['value' => 'sample value']
+        ]);
 
         $this->assertNull($section->getElementValue('sample1'));
         $this->assertNull($section->getElementValue('sample2'));

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2016 Lp digital system
+ * Copyright (c) 2017 Lp digital system
  *
  * This file is part of ConfigurationBundle.
  *
@@ -34,7 +34,7 @@ use LpDigital\Bundle\ConfigurationBundle\Entity\Section;
  *
  * @category        Bundle
  * @manufacturer    Lp digital - http://www.lp-digital.fr
- * @copyright       ©2015 - Lp digital
+ * @copyright       ©2017 - Lp digital
  * @author          Cédric Bouillot (CBO) <cedric.bouillot@lp-digital.fr>
  */
 class Configuration extends AbstractBundle
@@ -84,7 +84,7 @@ class Configuration extends AbstractBundle
      */
     public function start()
     {
-        $this->sections = $this->getEntityManager()->getRepository('LpDigital\Bundle\ConfigurationBundle\Entity\Section');
+        $this->sections = $this->getEntityManager()->getRepository(Section::class);
         $this->site = $this->getApplication()->getSite();
         $this->conf = $this->getConfig()->getSection('sections');
         $this->sanitizeConf($this->conf);
@@ -93,16 +93,18 @@ class Configuration extends AbstractBundle
     /**
      * Get sections data from config.
      *
-     * @param  mixed $section    Section(s) to get.
+     * @param  mixed   $section           Section(s) to get.
      *
-     * @return array             Array of sections with fields/values.
+     * @return array                      Array of sections with fields/values.
      *
      * @throws \RuntimeException Thrown if he bundle is not installed.
      */
     public function getSections($section = [])
     {
         if (!$this->isInstalled()) {
-            throw new \RuntimeException(sprintf('Configuration bundle is not install, please run `./backbee bundle:install %s`', $this->getId()));
+            throw new \RuntimeException(
+                sprintf('Configuration bundle is not install, please run `./backbee bundle:install %s`', $this->getId())
+            );
         }
 
         if (!is_array($section)) {
@@ -116,8 +118,14 @@ class Configuration extends AbstractBundle
             }
 
             $sections[$key] = $item;
+            $validMarkers = array_keys($sections[$key]['elements']);
             if (null !== $stored = $this->getStoredSection($key)) {
                 $sections[$key]['elements'] = array_merge($sections[$key]['elements'], $stored->getElements());
+            }
+
+            $invalidMarkers = array_diff(array_keys($sections[$key]['elements']), $validMarkers);
+            foreach ($invalidMarkers as $marker) {
+                unset($sections[$key]['elements'][$marker]);
             }
         }
 
@@ -139,7 +147,9 @@ class Configuration extends AbstractBundle
     public function setSection($label, array $values)
     {
         if (!$this->isInstalled()) {
-            throw new \RuntimeException(sprintf('Configuration bundle is not install, please run `./backbee bundle:install %s`', $this->getId()));
+            throw new \RuntimeException(
+                sprintf('Configuration bundle is not install, please run `./backbee bundle:install %s`', $this->getId())
+            );
         }
 
         if (!isset($this->conf[$label])) {
@@ -150,7 +160,7 @@ class Configuration extends AbstractBundle
         $section = $this->getStoredSection($label, true);
         foreach ($this->conf[$label]['elements'] as $key => $element) {
             $value = isset($values[$key]) ? $values[$key] : null;
-            $element['value'] = null !== $value ? $value : $section->getElementValue($key);
+            $element['value'] = null !== $value ? $value :($section->getElementValue($key) ?: $element['value']);
             $elements[$key] = $element;
         }
 
@@ -194,11 +204,10 @@ class Configuration extends AbstractBundle
     private function sanitizeConf(array &$conf)
     {
         foreach ($conf as $section => $item) {
-            if (
-                    !isset($this->conf[$section])
-                    || !is_array($item)
-                    || !isset($item['elements'])
-                    || !is_array($item['elements'])
+            if (!isset($this->conf[$section])
+                || !is_array($item)
+                || !isset($item['elements'])
+                || !is_array($item['elements'])
             ) {
                 unset($conf[$section]);
                 continue;
@@ -251,6 +260,5 @@ class Configuration extends AbstractBundle
      */
     public function stop()
     {
-
     }
 }

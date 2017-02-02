@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2016 Lp digital system
+ * Copyright (c) 2017 Lp digital system
  *
  * This file is part of ConfigurationBundle.
  *
@@ -86,6 +86,7 @@ class ConfigHelperTest extends ConfigurationTestCase
         $this->assertNull($helper('nomarker'));
         $this->assertNull($helper('unknown:element'));
         $this->assertNull($helper('sample1:element:unknown'));
+        $this->assertEquals('value', $helper('sample1:element:unknown', 'value'));
         $this->assertEquals('value', $helper('sample1:text'));
     }
 }

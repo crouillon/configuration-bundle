@@ -22,7 +22,11 @@ sample3:
 sample4:
     title: fake
     elements:
-        text:
+        text1:
+            type: text
+            label: Example for text value
+            value: ''
+        text2:
             type: text
             label: Example for text value
             value: ''

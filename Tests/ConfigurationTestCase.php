@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2016 Lp digital system
+ * Copyright (c) 2017 Lp digital system
  *
  * This file is part of ConfigurationBundle.
  *
@@ -68,7 +68,9 @@ class ConfigurationTestCase extends \PHPUnit_Framework_TestCase
         vfsStream::setup('repositorydir', 0777, $mockConfig);
         $mockApp = new MockBBApplication(null, null, false, $mockConfig, __DIR__ . '/../vendor');
         $this->bundle = $mockApp->getBundle('conf');
-        $this->bundle->getConfig()->setSection('sections', Yaml::parse(file_get_contents(__DIR__ . '/Config/sections.yml')));
+        $this->bundle
+            ->getConfig()
+            ->setSection('sections', Yaml::parse(file_get_contents(__DIR__ . '/Config/sections.yml')));
     }
 
     /**
@@ -105,5 +107,21 @@ class ConfigurationTestCase extends \PHPUnit_Framework_TestCase
         $property->setAccessible(true);
 
         return $property->getValue($object);
+    }
+
+    /**
+     * Set a protected/private property of a class.
+     *
+     * @param  object &$object      Instantiated object.
+     * @param  string $propertyName Method name to call.
+     * @param  mixed  $value        The value to be setted.
+     */
+    public function setProperty(&$object, $propertyName, $value)
+    {
+        $reflection = new \ReflectionClass(get_class($object));
+        $property = $reflection->getProperty($propertyName);
+        $property->setAccessible(true);
+
+        $property->setValue($object, $value);
     }
 }

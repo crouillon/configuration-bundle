@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2016 Lp digital system
+ * Copyright (c) 2017 Lp digital system
  *
  * This file is part of ConfigurationBundle.
  *
@@ -29,7 +29,7 @@ use BackBee\Site\Site;
  * Configuration section entity
  *
  * @category    Entity
- * @copyright   ©2015 - Lp digital - http://www.lp-digital.fr
+ * @copyright   ©2017 - Lp digital - http://www.lp-digital.fr
  * @author      Cédric Bouillot (CBO) <cedric.bouillot@lp-digital.fr>
  *
  * @ORM\Entity

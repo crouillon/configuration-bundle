@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2016 Lp digital system
+ * Copyright (c) 2017 Lp digital system
  *
  * This file is part of ConfigurationBundle.
  *
@@ -32,7 +32,7 @@ use LpDigital\Bundle\ConfigurationBundle\Configuration;
  *
  * @category  Helper
  * @package   Publishpaper\ConfigurationBundle\Helpers
- * @copyright © 2015 - Lp digital (http://www.lp-digital.fr)
+ * @copyright © 2017 - Lp digital (http://www.lp-digital.fr)
  * @author    Cédric Bouillot (CBO) <cedric.bouillot@lp-digital.fr>
  */
 class ConfigHelper extends AbstractHelper
@@ -59,11 +59,12 @@ class ConfigHelper extends AbstractHelper
     /**
      * Returns an element value
      *
-     * @param  $marker A path to set required value: section:element
+     * @param  $marker  A path to set required value: section:element.
+     * @param  $default Optional, default value if configuration $marker doesn't exists.
      *
      * @return mixed
      */
-    public function __invoke($marker)
+    public function __invoke($marker, $default = null)
     {
         if (false === strpos($marker, ':')) {
             return null;
@@ -72,6 +73,6 @@ class ConfigHelper extends AbstractHelper
         list($label, $element) = explode(':', $marker, 2);
         $section = $this->confBundle->getSections($label);
 
-        return Collection::get($section, sprintf('%s:elements:%s:value', $label, $element), null);
+        return Collection::get($section, sprintf('%s:elements:%s:value', $label, $element), $default);
     }
 }
