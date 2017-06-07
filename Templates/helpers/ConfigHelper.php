@@ -67,12 +67,13 @@ class ConfigHelper extends AbstractHelper
     public function __invoke($marker, $default = null)
     {
         if (false === strpos($marker, ':')) {
-            return null;
+            return $default;
         }
 
         list($label, $element) = explode(':', $marker, 2);
         $section = $this->confBundle->getSections($label);
+        $value = Collection::get($section, sprintf('%s:elements:%s:value', $label, $element));
 
-        return Collection::get($section, sprintf('%s:elements:%s:value', $label, $element), $default);
+        return empty($value) ? $default : $value;
     }
 }

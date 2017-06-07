@@ -88,5 +88,6 @@ class ConfigHelperTest extends ConfigurationTestCase
         $this->assertNull($helper('sample1:element:unknown'));
         $this->assertEquals('value', $helper('sample1:element:unknown', 'value'));
         $this->assertEquals('value', $helper('sample1:text'));
+        $this->assertEquals('value', $helper('nomarker', 'value'));
     }
 }
